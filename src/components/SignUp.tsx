@@ -1,10 +1,7 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
+import {useState} from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -28,12 +25,16 @@ function Copyright({sx}: {sx: object}) {
 const theme = createTheme();
 
 export default function SignUp() {
+
+  const [isInputImage, setIsInputImage] = useState(true);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get('email'),
       password: data.get('password'),
+      image: data.get('image')
     });
   };
 
@@ -62,6 +63,7 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  type="email"
                 />
               </Grid>
               <Grid item xs={12}>
@@ -79,12 +81,14 @@ export default function SignUp() {
                 <Button
                   variant="contained"
                   component="label"
-                  fullWidth
                 >
-                    Upload File
+                    Upload Image
                     <input
                     type="file"
+                    accept="image/*"
                     hidden
+                    name="image"
+                    id="image"
                 />
                 </Button>
               </Grid>
