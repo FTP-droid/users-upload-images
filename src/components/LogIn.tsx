@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link as RouteLink} from 'react-router-dom';
 
-import {createUserWithEmailAndPassword } from "firebase/auth";
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,14 +15,31 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { auth } from '../Firebase'
 
 const theme = createTheme();
+const IMAGE_REGEX = /[\/.](gif|jpg|jpeg|tiff|png)$/i;
 
 export default function LogIn({isSignUpPage}: {isSignUpPage: boolean}) {
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [isFileInputValid, setIsFileInputValid] = useState(true);
+  const [errorFromFirebase, setErrorFromFirebase] = useState("");
+
+  const handleSubmit = isSignUpPage? (event: React.FormEvent<HTMLFormElement>) => {
+    setErrorFromFirebase("");
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get('email') as string;
     const password = data.get('password') as string;
+    const image = data.get('image');
+
+
+    if(image == null){
+      setIsFileInputValid(false);
+      return
+    }
+
+    if(image instanceof File){
+      setIsFileInputValid(IMAGE_REGEX.test(image.name));
+      if(!isFileInputValid) return;
+    };
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -30,11 +47,28 @@ export default function LogIn({isSignUpPage}: {isSignUpPage: boolean}) {
         console.log(user);
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
+        setErrorFromFirebase(error.message);
       })
-  };
+  } : 
+
+  (event: React.FormEvent<HTMLFormElement>) => {
+    setErrorFromFirebase("");
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const email = data.get('email') as string;
+    const password = data.get('password') as string;
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      console.log(user);
+      // ...
+    })
+    .catch((error) => {
+      setErrorFromFirebase(error.message);
+    });
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -62,6 +96,7 @@ export default function LogIn({isSignUpPage}: {isSignUpPage: boolean}) {
                   name="email"
                   autoComplete="email"
                   type="email"
+                  
                 />
               </Grid>
               <Grid item xs={12}>
@@ -75,21 +110,36 @@ export default function LogIn({isSignUpPage}: {isSignUpPage: boolean}) {
                   autoComplete="new-password"
                 />
               </Grid>
-              {isSignUpPage && <Grid item xs={12}> 
-                <Button
-                  variant="contained"
-                  component="label"
-                >
-                    Upload Image
-                    <input
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    name="image"
-                    id="image"
-                />
-                </Button>
-              </Grid>}
+              {isSignUpPage && (
+                <Grid item xs={12}> 
+                  <Button
+                    variant="contained"
+                    component="label"
+                  >
+                      Upload Image
+                      <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      name="image"
+                      id="image"
+                  />
+                  </Button>
+                </Grid>
+              )}
+              {
+                errorFromFirebase && 
+                  <Grid item xs={12}> 
+                    {errorFromFirebase}
+                  </Grid>
+              }
+
+              {isSignUpPage && (
+                !isFileInputValid && 
+                  <Grid item xs={12}> 
+                    Invalid Image Upload
+                  </Grid>
+              )}
             </Grid>
             <Button
               type="submit"
