@@ -1,4 +1,5 @@
-import {useState} from 'react';
+import { Link as RouteLink} from 'react-router-dom';
+
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -48,7 +49,7 @@ export default function SignIn() {
           }}
         >
           <Typography component="h1" variant="h5">
-            Sign up
+            Sign In
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
@@ -85,9 +86,11 @@ export default function SignIn() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
-                  Don't have an account? Sign up
-                </Link>
+                <RouteLink to="signup">
+                    <Link variant="body2">
+                        Don't have an account? Sign up
+                    </Link>
+                </RouteLink>
               </Grid>
             </Grid>
           </Box>
