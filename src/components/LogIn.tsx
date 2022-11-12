@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link as RouteLink} from 'react-router-dom';
+import { Link as RouteLink, useNavigate} from 'react-router-dom';
 
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
@@ -18,6 +18,8 @@ const theme = createTheme();
 const IMAGE_REGEX = /[\/.](gif|jpg|jpeg|tiff|png)$/i;
 
 export default function LogIn({isSignUpPage}: {isSignUpPage: boolean}) {
+
+  const navigate = useNavigate();
 
   const [isFileInputValid, setIsFileInputValid] = useState(true);
   const [errorFromFirebase, setErrorFromFirebase] = useState("");
@@ -49,8 +51,8 @@ export default function LogIn({isSignUpPage}: {isSignUpPage: boolean}) {
       .catch((error) => {
         setErrorFromFirebase(error.message);
       })
-  } : 
-
+  } 
+    : 
   (event: React.FormEvent<HTMLFormElement>) => {
     setErrorFromFirebase("");
     event.preventDefault();
@@ -61,12 +63,13 @@ export default function LogIn({isSignUpPage}: {isSignUpPage: boolean}) {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
       // Signed in 
-      const user = userCredential.user;
-      console.log(user);
-      // ...
+      const username = userCredential.user.email;
+      console.log(username);
+      navigate('/user', {state:{username: username}});  
     })
     .catch((error) => {
       setErrorFromFirebase(error.message);
+      console.log(error.message);
     });
   }
 

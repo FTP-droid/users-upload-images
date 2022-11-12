@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useLocation} from 'react-router-dom';
 
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -9,7 +10,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme();
 
-export default function SignUp() {
+export default function UserPage() {
+
+  const location = useLocation();
 
   return (
     <ThemeProvider theme={theme}>
@@ -26,7 +29,7 @@ export default function SignUp() {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            {location.state.username}
           </Typography>
           
         </Box>
