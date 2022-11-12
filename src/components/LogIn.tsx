@@ -91,7 +91,7 @@ export default function LogIn({isSignUpPage}: {isSignUpPage: boolean}) {
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <RouteLink to={isSignUpPage? "/": "/signup"}>
-                    {isSignUpPage? "Already have an account? Sign in": "Don't have an account? Log in"}
+                    {isSignUpPage? "Already have an account? Sign in": "Don't have an account? Sign up"}
                 </RouteLink>
               </Grid>
             </Grid>
