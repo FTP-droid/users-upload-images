@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link as RouteLink} from 'react-router-dom';
 
+import {createUserWithEmailAndPassword } from "firebase/auth";
+
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -10,19 +12,28 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { auth } from '../Firebase'
+
 const theme = createTheme();
-//update constant theme
 
 export default function LogIn({isSignUpPage}: {isSignUpPage: boolean}) {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-      image: data.get('image')
-    });
+    const email = data.get('email') as string;
+    const password = data.get('password') as string;
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      })
   };
 
   return (
